@@ -1,153 +1,159 @@
-# Commands: Create note in folder
+# Komutlar: Klasörde not oluşturma
 
-This plugin adds a new command to create a new note in a specific path.
+Bu eklenti belirlenmiş bir konumda yeni not oluşturmak için yeni bir komut ekler.
 
-To add a path, use the settings tab. It will ask you to select a path. The plugin will then create a new note in this path.
+Konum eklemek için ayarlar sekmesini kullanın. Konum eklemeniz için seçim yapmanız gerekecek ve daha sonrasında bu konumda yeni bir not oluşturacaktır.
 
-The main menu allows you :
-- To duplicate a command ;
-- To move the order for the quick-switcher command (only accessible using the `enable for all folder` options).
+Ana menü şunları yapmanızı sağlar:
+- Bir komutu çoğaltmak
+- Hızlı geçiş komutu için düzenin yerini değiştirmek (Sadece "Bütün klasörler için uygula" seçeneğiyle kullanılabilir).
+
+> [!NOT]
+> Eğer geçerli klasöre konum atamak istiyorsanız, konumdaki `{{current}}` değişkenini kullanabilirsiniz. <br>
+> > Bu komut sadece geçerli sekmede dosya açtığınız sürece çalışır. Aynı zamanda dosya menüsünü de kullanabilirsiniz. (Bunun ayarlarda aktif edilmiş olması gereklidir.)
+
+Her klasör için:
+- Başka bir dosya ismi ve olası bir şablon ile isimlendirildiğini
+- Dosyanın oluşturulduğunu (Geçerli ve yeni sekmede, pencerede ya da bölünmüş ekranda.)
+- Not oluşturulduktan sonra odak haline getirilip getirilmemesi gerektiğini
+- Bir şablonun uygulanıp uygulanmaması gerektiğini (Templater kullanarak.)
+- Dosya menüsünde bir komut isteyip istemediğinizi <br>
+Seçebilirsiniz.
+
+Konumu ekledikten sonra, "Create Note In Folder: {{commandName}}" komudunu kullanabilirsiniz. <br>
+
+## Genel ayarlar
+
+### Genel şablon
+
+Ayarlar sekmesinde, varsayılan şablonu her klasör için tercih edip / düzenleyebilirsiniz. <br>
+
+Varsayılan şablon iki şekilde kullanılabilir: <br>
+- Bütün "kaydedilmiş" klasörler için varsayılan bir şablon (örnek olarak ayarlar sekmesinde bulunmayan klasörler)
+- Yeni bir komut oluştururken kendiliğinden uygulanan bir şablon, hep aynı ayarları kullanıyorsanız diye. <br>
+
+Her klasörde varsayılan şablonu kullanmak için, "uygula [enable]" butonuna basmanız gerekiyor. <br>
+
+#### Hızlı Geçiş
+
+Her klasör için varsayılan şablonu seçebilirsiniz. Bu durumda, varsayılan şablon; ayarlar sekmesinde bulunmayan klasörler için kullanılacaktır.
+Hızlı Geçiş:
+- `Create Note In Folder : Quick Switcher" komudunu kullanmanız için
+- Kaydedilmiş klasörü silen hızlı-geçiş özelliğini filtrelemeniz için <br>
+İşe yarayacaktır. <br>
+
+### Özel değişkenler
+
+Yeni dosya ve klasörler oluştururken, isimleri kişiselleştirmek için konumda özel değişkenler kullanabilirsiniz. Bir değişken kullanmak için, ismini `{{` ve `}}` sembolleri arasına koyun. Örnek olarak, eğer `birDegisken` isimli bir değişkeniniz varsa, konuma `{{birDegisken}}` şeklinde dahil edebilirsiniz. <br>
+
+Eğer oluşturmak istediğiniz klasör daha oluşturulmadıysa, konumdaki bir değişkeni kullandığınız zaman oluşturulacaktır. <br>
+
+Bazı adlandırma seçenekleriniz mevcuttur: <br>
+1. **Düzenli İfadeler (regex):** Regexi `//` ile kapatın, örnek olarak: `/\d+-\d+/gi`. Bu eğik çizgiler ile ayrılmış numaraları eşleyecektir. Örnek olarak `{{/\d+-\d+/gi}}`. Bu ifade ile ismi eşleşen herhangi bir klasör, o klasörün içerikleri ile yer değiştirecektir. Örnek olarak, `/\d+-\d+/gi` ifadesini kullanarak, konumda `2021-01` adı verilmiş olan bir klasör oluşturmanıza izin verir. Bu aynı zamanda `2021-02`, `2021-03` benzeri isimlerde de işe yarar. Bu regexi kullanmadıkça, her klasör için farklı bir şablona ihtiyacınız olacaktır. <br>
+2. **Mutlak Dizi**: Bir yazı dizisini olduğu gibi kullanın. <br>
+3. **Tarih Formatı**: [moment.js](https://momentjs.com/docs/#/displaying/) kaynağını temsil alarak tarih formatları oluşturur, `GG-AA-YYYY` gibi, bu da geçerli tarihteki ile `2021-01-01` formatında yer değiştirecektir. Bu işlem, konumlarınızda dinamik tarihler kullanmanıza yarar, geçerli klasörde geçerli ayı `AA-YYYY` şeklinde kullanarak. Bu özellik olmadıkça, her ay için bireysel şablonlar oluşturmanız gerekmektedir. <br>
+
+> [!NOT]
+> Bu seçenekleri Templater ayarlarıyla kullanmak, bir sürü dosyada Templater seçeneğini kullanmanızı engelleyebilir. <br>
+
+### Odaklanma
+
+Oluşturulmuş dosyayı açmamak da tamamen sizin elinizdedir. Bu durumda, dosya arka planda oluşturulacaktır. Eğer bir şablon kullanırsanız, Templater API'sı kullanılacak, bir şey yapmanıza gerek kalmayacaktır. <br>
+
+Bu ayarlar ile, numaralandırma seçeneği kapılı ise (incrementation) yeni bir dosya oluşturmak yerine mevcut dosyayı açabilirsiniz. <br>
+
+> [!NOT]
+> Numaralandırma seçeneğini, çoktan mevcut bir dosyayı açmak istemiyorsanız, açık hale getirin. <br>
+
+## Klasör başına ayarlar
+
+### Dosya ismi & şablonlar hakkında
+
+Bir dosya ismi ve şablon tercih edebilirsiniz. Şablon:
+- Dosyanın ismi
+- [moment.js](https://momentjs.com/docs/#/displaying/) kaynağından bir tarih formatında
+olabilir. <br>
+
+Eğer şablon kullanmak isterseniz, dosya ismi oluşturmanıza gerek yoktur. Dahası, şablonun nasıl ekleneceğini seçebilirsiniz: <br>
+- Dosya isminden önce (eğer varsa) <br>
+- Dosya isminden sonra <br>
+Ve seperatör koyabilirsiniz. <br>
+
+Başlık, aynı isime sahip bir dosya çoktan mevcut ise numaralandırılacaktır. <br>
+
+Eğer Templater eklentisi yüklenmiş haldeyse, notlarınıza şablon atayabilirsiniz. Not oluşturulduktan sonra, atanmış olan şablon devreye girecektir. Bu işlevsellik, "Klasör Şablonları" davranışını taklit etmek içindir. Fakat, yapımcı olarak, klasör konumlarının değişkenler ile kullanılmasına izin verdiğim için, daha özgür bir işlev kazanıyorsunuz. <br>
+
+> [!NOT]
+> Diğer bir deyişle, her klasöre bireysel bir şablon eklemek için bir sebep bulunmamaktadır. [Özel değişkenler](#özel-degişkenler)'i kullanmayı tercih etmelisiniz. <br>
+
+#### Başlık numaralandırılması  <br>
+
+Eğer aynı isimde bir dosya çoktan mevcut ise adlandırmak yerine numaralandırılma sistemini tercih edebilirsiniz. Eğer bu seçenek kapalıysa, eklenti, yeni bir dosya oluşturmak yerine mevcut dosyayı açacaktır. <br>
+
+## Gelişmiş ayarlar <br>
+
+Bu eklenti, Obsidian'ın yeni bir dosya oluştururken yaptığı davranışı taklit ederek satır içi başlığa odaklanmanızı sağlamaktadır. <br>
+Fakat, `{{current}}` şablonuyla, kullanılan metod biraz daha ve bazı durumlarda çalışmayabilir. Ben varsayılan olarak 50ms bekleten bir zaman aşımı kullandım. Eğer yavaş bir bilgisayara sahipseniz, bu değeri `data.json` dosyasından artırabilirsiniz.  (`.obsidian/plugins/create-note-in-folder` konumunda)
+Bunun için `timeOutForInlineTitle` adlı değişkeni aramanız gerekecektir. <br>
 
 > [!NOTE]
-> If you want to create a path for the current folder, you can use the `{{current}}` variable in the path.
-> The command will only work if you have a file opened in the current tab. You could also use the file-menu to use this command (this need to be enabled in the settings).
+> Eğer değişken yoksa, dosyanın en altına oluşturmanız gerekir. <br>
 
-You can choose how per each folder :
-- The note is named with a filename and a possible template.
-- The note is created (in the current tab, in a new tab, windows or in a split view)
-- If the note must be focused after creation
-- If a template must be applied (using templater)
-- If you want a command in the file-menu
+Bu değeri düzenlemek için iki farklı yol vardır: <br>
 
-After adding the path, you can use the command "Create Note In Folder: {{commandName}}" to use the command.
-
-## Global settings
-
-### Global template
-
-You can set / manage the default template for all folders in the settings tab.
-
-The default template can be used in two ways :
-- A default template for all "non registered" folder (i.e. folder not in the settings tab)
-- A default template automatically applied when creating a new command, in case you use always the same settings for example.
-
-To use the default template for all folder, you need to click on the enable button.
-
-#### Quick Switcher
-
-You can choose to enable the default template for all folder. In this case, the default template will be used for all folder not in the settings tab.
-It will allow you to enable:
-- A pseudo quick-switcher with using the command `Create Note In Folder : Quick Switcher`.
-- Filter this quick-switcher that remove the registered folder.
-
-### Custom variables
-
-When creating files or folders, you can use custom variables in the path to customize the names. To use a variable, simply put its name between `{{` and `}}`. For instance, if you have a variable named `myVar`, you can incorporate it into the path like this: `{{myVar}}`.
-
-Remember that if the folder you're referencing doesn't exist yet, it will only be created when you use a variable in the path.
-
-You have several naming options:
-1. **Regular Expression (regex):** Enclose the regex in `//`, e.g., `/\d+-\d+/gi`. This will match numbers separated by a dash, like `{{/\d+-\d+/gi}}`. Any folder name matching this regex will be replaced with the contents of that folder. For example, it allows you to create a file in a folder named `2021-01` by using the regex `/\d+-\d+/gi` in the path. This works for `2021-02`, `2021-03`, etc., as well. Without using the regex, you'd need a separate template for each folder.
-2. **Strict String:** Use a plain text string as is.
-3. **Date Format:** Utilize date formats based on [moment.js](https://momentjs.com/docs/#/displaying/), like `YYYY-MM-DD`, which would be replaced by the current date in the format `2021-01-01`. This enables you to use dynamic dates in your paths, such as the folder of the current month by using `YYYY-MM`. Without this feature, you'd have to create individual templates for each month.
-
-> [!NOTE]
-> Using this with the templater settings could you prevent to set-up in templater option a lot of folder.
-
-
-### Focusing
-
-You can choose to totally not open a file that is created. In this case, the file will be created in the background. If you use a template, the templater API will be used, and you don't need to do anything.
-
-With this settings, and if the incrementation is disabled, you can also choose to open the existing file instead of creating a new one.
-
-> [!NOTE]
-> Enable the incrementation if you don't want to open the already existing file.
-
-## Per folder settings
-
-### About file name & template
-
-You can choose to set a filename and a template. The template can be :
-- The folder name
-- A date, with the format based on [moment.js](https://momentjs.com/docs/#/displaying/).
-
-In the case you choose to use a template, you don't need to set a filename. Moreover, you can choose how the template will be added :
-- Before the filename (if any)
-- After it.
-And you can set a separator.
-
-The title will be incremented if a file with the same name already exists.
-
-If you have the Templater plugin installed and configured, you can assign a template to a note. Once a note is created, the assigned template will be executed. This functionality enables you to replicate the behavior of "Folder Templates." However, because I permit the utilization of folder paths with variables, you gain a higher degree of flexibility.
-
-> [!NOTE]
-> In other words, there is no necessity to individually add a template for each folder and you must prefer employ a [custom variable](#custom-variables) instead.
-
-#### Incrementing title
-
-You can choose to increment the title if a file with the same name already exists. If this option is disabled, the plugin will open the existing file instead of creating a new one.
-
-## Advanced settings
-
-The plugin allow you to focusing onto the inline title, mimicing the behavior of the Obsidian when creating a new file.
-However, with the `{{current}}` template, the methods used is a little "hacky", and could not work in some case. I used a timeout, by default, of 50ms to wait the creation of the file. If you have a slow computer, you can increase this value in the `data.json` file (in the `.obsidian/plugins/create-note-in-folder` folder). For that, you need to search the `timeOutForInlineTitle` variable in the file.
-
-> [!NOTE]
-> If the variable is not present, you need to create it at the end of the file.
-
-There is two way to edit/adjust this value:
 ```json
 {
-  // (your settings are before)
+  // (ayarlarınız bu satırdan önce gelecek)
   timeOutForInlineTitle: 50
 }
 ```
-This way will set the value for desktop and mobile to the same amount of time.
+Bu ayar masaüstü ve mobil uygulamarı için aynı değeri kullanacaktır. <br>
 
 ```json
 {
-  // (your settings are before)
+  // (ayarlarınız bu satırdan önce gelecek)
   timeOutForInlineTitle: {
     desktop: 50,
     mobile: 100
   }
 }
 ```
-Will set the value for desktop and mobile to different amount of time.
+Bu ayar ise masaüstü ve mobil uygulamarı için farklı değeri kullanacaktır. <br>
 
-After changing the setting, you need to reload the plugin.
+Değeri değiştirdilten sonra eklentiyi yeniden değiştirmeniz gerekir. <br>
 
 -—
-# Installation
 
-- [x] From Obsidian's community plugins
-- [x] Using [BRAT](https://github.com/TfTHacker/obsidian42-brat#adding-a-beta-plugin) using `https://github.com/mara-li/create-note-in-folder`
-- [x] From the release page:
-  - Download the latest release
-  - Unzip create-note-in-path.zip in `.obsidian/plugins/` path
-  - In Obsidian settings, reload the plugin
-  - Enable the plugin
+# Eklentiyi Yükleme
 
-# 🎼 Translation
+- [x] Obsidian'ın topluluk eklentilerinden <br>
+- [x] [BRAT](https://github.com/TfTHacker/obsidian42-brat#adding-a-beta-plugin)'dan  `https://github.com/mara-li/create-note-in-folder`'ı kullanarak <br>
+- [x] GitHub üzerinde sürümler kısmından  <br>
+  - Son sürümü indirin <br>
+  - create-note-in-path.zip dosyasını `.obsidian/plugins/` konumuna çıkarın <br>
+  - Obsidian ayarlarından, eklentiyi tekrar başlatın. <br>
+  - Eklentiyi aktif edin. <br>
 
-- [x] English
-- [x] French
+# 🎼 Çeviriler
 
-To add a translation:
-1. Fork the repository
-2. Add the translation in the `src/i18n/locales` folder with the name of the language (ex: `fr.json`). 
-    - You can get your locale language from Obsidian using [obsidian translation](https://github.com/obsidianmd/obsidian-translations) or using the commands (in templater for example) : `<% tp.obsidian.moment.locale() %>`
-    - Copy the content of the [`en.json`](./src/i18n/locales/en.json) file in the new file
-    - Translate the content
-3. Edit `i18n/i18next.ts` :
-    - Add `import * as <lang> from "./locales/<lang>.json";`
-    - Edit the `ressource` part with adding : `<lang> : {translation: <lang>}`
+- [x] İngilizce <br>
+- [x] Fransızca <br>
+- [x] Türkçe <br>
+
+Çeviri eklemek için:
+1. Depoyu forklayın. <br>
+2. Çevirinizi  `src/i18n/locales` klasörüne, dil isminin kısaltımını kullanarak yazın (örnek olarak: `tr.json`). <br>
+    - Dilinizin dosyalarını Obsidian'dan [Obsidian çevirileri](https://github.com/obsidianmd/obsidian-translations) kısmından veya Templater örnek olacak şekilde: `<% tp.obsidian.moment.locale() %>` komudunu alabilirsiniz. <br>
+    - [`en.json`](./src/i18n/locales/en.json) dosyasının içeriklerini yeni dosyaya kopyalayın. <br>
+    - İçeriği çevirin.
+3. `i18n/i18next.ts`'i düzenleyin: <br>
+     - `import * as <lang> from "./locales/<lang>.json";` ekleyin. <br>
+     - `ressource` kısmını: `<lang> : {translation: <lang>}` ekleyerek düzenleyin. <br>
 
 ---
 
-# Credit
-Many thanks to @SilentVoid13 and @RafaelGB for their [Templater](https://github.com/SilentVoid13/Templater) and [dbFolder](https://github.com/RafaelGB/obsidian-db-folder), where some part of the code where taken.
+# Emeği geçenler
+@SilentVoid13 ve @RafaelGB'e, bazı kodların alındığı [Templater](https://github.com/SilentVoid13/Templater) ve [dbFolder](https://github.com/RafaelGB/obsidian-db-folder) eklentileri için teşekkür ederiz.
 
 ---
 
